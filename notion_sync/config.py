@@ -46,8 +46,8 @@ def load_config() -> Config:
     gh_repo = get_env_or_default("NOTES_GITHUB_REPOSITORY")
     
     # We can default Git settings if they are not defined
-    git_name = get_env_or_default("GIT_NAME", "github-actions[bot]")
-    git_email = get_env_or_default("GIT_EMAIL", "github-actions[bot]@users.noreply.github.com")
+    git_name = get_env_or_default("GIT_NAME", "")
+    git_email = get_env_or_default("GIT_EMAIL", "")
     
     download_imgs = get_env_bool("DOWNLOAD_IMAGES", True)
     delete_gh = get_env_bool("DELETE_ON_GITHUB", True)
@@ -73,8 +73,8 @@ def write_env_file(
     database_id: str,
     github_username: str,
     github_repository: str,
-    git_name: str = "github-actions[bot]",
-    git_email: str = "github-actions[bot]@users.noreply.github.com",
+    git_name: str = "",
+    git_email: str = "",
     download_images: bool = True,
     delete_on_github: bool = True
 ) -> None:

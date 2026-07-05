@@ -34,16 +34,22 @@ class GitManager:
         return git_dir.exists() and git_dir.is_dir()
 
     def configure_user(self) -> None:
-        """Configures Git user.name and user.email for the local repository."""
-        logger.info(f"Configuring Git user locally: Name='{self.git_name}', Email='{self.git_email}'")
-        code, _, err = self.run_command(["git", "config", "local", "user.name", self.git_name])
-        if code != 0:
-            # Fallback to normal config if local configuration fails
-            self.run_command(["git", "config", "user.name", self.git_name])
-            
-        code, _, err = self.run_command(["git", "config", "local", "user.email", self.git_email])
-        if code != 0:
-            self.run_command(["git", "config", "user.email", self.git_email])
+        """Configures Git user.name and user.email for the local repository if provided."""
+        if self.git_name:
+            logger.info(f"Configuring Git user.name locally: '{self.git_name}'")
+            code, _, err = self.run_command(["git", "config", "local", "user.name", self.git_name])
+            if code != 0:
+                self.run_command(["git", "config", "user.name", self.git_name])
+        else:
+            logger.info("Git user.name not specified. Using system/global configuration.")
+
+        if self.git_email:
+            logger.info(f"Configuring Git user.email locally: '{self.git_email}'")
+            code, _, err = self.run_command(["git", "config", "local", "user.email", self.git_email])
+            if code != 0:
+                self.run_command(["git", "config", "user.email", self.git_email])
+        else:
+            logger.info("Git user.email not specified. Using system/global configuration.")
 
     def has_changes(self) -> bool:
         """Returns True if there are modified, deleted, or untracked changes in the repo."""

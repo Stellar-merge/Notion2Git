@@ -12,7 +12,6 @@ It dynamically replicates your Notion parent-child database hierarchy, downloads
 - **🖼️ Localized Image Syncing**: Downloads Notion-hosted images and routes them to database-wise `images/` folders (e.g. `notes/Patterns/images/`). In-file markdown links are updated to relative assets (`![](images/diagram.png)`).
 - **⚡ Cache-Optimized Change Detection**: Employs an MD5 content hash cache to sync only modified, added, or renamed pages, minimizing disk writes and git churn.
 - **🔄 Auto-Rename & Move Tracking**: Detects when pages are renamed or moved to different sub-databases in Notion, cleaning up old files, deleting unused images, pruning empty directories, and updating Git history.
-- **🤖 GitHub Actions Support**: Includes a pre-configured CI/CD workflow to sync your notes automatically every hour for free.
 - **💻 Sleek Interactive CLI**: Guided setup wizard and logs powered by Typer and Rich.
 
 ---
@@ -62,8 +61,8 @@ The project uses `uv`, a fast Python package installer and manager.
    NOTION_DATABASE_ID=your_notion_page_id_here
    NOTES_GITHUB_USERNAME=your_github_username
    NOTES_GITHUB_REPOSITORY=DSA
-   GIT_NAME=github-actions[bot]
-   GIT_EMAIL=github-actions[bot]@users.noreply.github.com
+   GIT_NAME=your_git_name
+   GIT_EMAIL=your_git_email
    DOWNLOAD_IMAGES=true
    DELETE_ON_GITHUB=true
    ```
@@ -81,21 +80,7 @@ The project uses `uv`, a fast Python package installer and manager.
 | **Rebuild README** | `uv run sync.py rebuild-readme` | Re-renders stats table and folder visualization in target README manually. |
 | **Clean Cache** | `uv run sync.py clean-cache` | Clears local sync cache metadata. |
 
----
 
-## 🤖 GitHub Actions hourly Sync Setup
-
-To automate syncing every hour for free:
-1. Push this sync app repository to your own GitHub account.
-2. In your GitHub repository, go to **Settings** -> **Secrets and variables** -> **Actions**.
-3. Create the following **Repository Secrets**:
-   * `NOTION_TOKEN`: Your secret Notion token.
-   * `NOTION_DATABASE_ID`: The ID of your root Notion page.
-   * `NOTES_GITHUB_USERNAME`: Your GitHub username.
-   * `NOTES_GITHUB_REPOSITORY`: Your private notes repository name (e.g. `DSA`).
-4. Go to the **Actions** tab of your repo, select **Notion to Git Sync**, and click **Run workflow** to trigger it manually, or let it run hourly on the cron trigger.
-
----
 
 ## 🗂️ Target Notes Folder Structure Example
 

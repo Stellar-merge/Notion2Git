@@ -53,8 +53,8 @@ def check_config_or_prompt() -> bool:
     db_id = typer.prompt("Notion Database ID")
     gh_user = typer.prompt("GitHub Username", default="")
     gh_repo = typer.prompt("GitHub Repository Name", default="")
-    git_name = typer.prompt("Git Committer Name", default="github-actions[bot]")
-    git_email = typer.prompt("Git Committer Email", default="github-actions[bot]@users.noreply.github.com")
+    git_name = typer.prompt("Git Committer Name (leave empty to use system Git config)", default="")
+    git_email = typer.prompt("Git Committer Email (leave empty to use system Git config)", default="")
     
     download_imgs = typer.confirm("Download images locally?", default=True)
     delete_gh = typer.confirm("Delete files from GitHub if deleted in Notion?", default=True)
