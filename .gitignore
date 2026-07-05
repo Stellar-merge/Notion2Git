@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+var/
+spec/
+
+# Environment and secrets
+.env
+.env.*
+
+# Project cache (sync state)
+cache/
+notes/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
