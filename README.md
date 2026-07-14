@@ -8,15 +8,15 @@ It dynamically replicates your Notion parent-child database hierarchy, downloads
 
 ##  Features
 
-- ** Hierarchical Folder Mirroring**: Automatically reflects nested databases (sub-databases) and pages as folders (e.g., `notes/Patterns/Arrays.md`). Supports any depth of nesting dynamically without hardcoded names.
-- ** Localized Image Syncing**: Downloads Notion-hosted images and routes them to database-wise `images/` folders (e.g. `notes/Patterns/images/`). In-file markdown links are updated to relative assets (`![](images/diagram.png)`).
-- ** Cache-Optimized Change Detection**: Employs an MD5 content hash cache to sync only modified, added, or renamed pages, minimizing disk writes and git churn.
-- ** Auto-Rename & Move Tracking**: Detects when pages are renamed or moved to different sub-databases in Notion, cleaning up old files, deleting unused images, pruning empty directories, and updating Git history.
+- **Hierarchical Folder Mirroring**: Automatically reflects nested databases (sub-databases) and pages as folders (e.g., `notes/Patterns/Arrays.md`). Supports any depth of nesting dynamically without hardcoded names.
+- **Localized Image Syncing**: Downloads Notion-hosted images and routes them to database-wise `images/` folders (e.g. `notes/Patterns/images/`). In-file markdown links are updated to relative assets (`![](images/diagram.png)`).
+- **Cache-Optimized Change Detection**: Employs an MD5 content hash cache to sync only modified, added, or renamed pages, minimizing disk writes and git churn.
+- **Auto-Rename & Move Tracking**: Detects when pages are renamed or moved to different sub-databases in Notion, cleaning up old files, deleting unused images, pruning empty directories, and updating Git history.
 - ** Sleek Interactive CLI**: Guided setup wizard and logs powered by Typer and Rich.
 
 ---
 
-##  Step-by-Step Setup Guide
+## Step-by-Step Setup Guide
 
 Follow this guide to get synchronized in 10 minutes.
 
