@@ -422,16 +422,14 @@ async def sync_process(force: bool = False, dry_run: bool = False):
         # Rebuild README
         execute_rebuild_readme(cache, config.notes_dir)
         
-        # Git commit and push
-        if git.has_changes():
-            console.print("\n[cyan]🚀 Git: Committing and pushing changes...[/cyan]")
-            success = git.commit_and_push("Sync Notion notes")
-            if success:
-                console.print("[green]✓ Git sync completed successfully![/green]")
-            else:
-                console.print("[red]❌ Git sync failed. Check warnings/errors above.[/red]")
+        # Git commit and push (always commit and push to guarantee GitHub contribution graph updates)
+        console.print("\n[cyan]🚀 Git: Committing and pushing changes...[/cyan]")
+        commit_msg = f"Sync Notion notes - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        success = git.commit_and_push(commit_msg, allow_empty=True)
+        if success:
+            console.print("[green]✓ Git sync completed successfully![/green]")
         else:
-            console.print("\n[green]No changes detected for Git commit.[/green]")
+            console.print("[red]❌ Git sync failed. Check warnings/errors above.[/red]")
     else:
         console.print("\n[yellow]Dry run enabled. No cache updates, disk writes, or git sync operations performed.[/yellow]")
 

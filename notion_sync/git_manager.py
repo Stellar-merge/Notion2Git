@@ -34,22 +34,31 @@ class GitManager:
         return git_dir.exists() and git_dir.is_dir()
 
     def configure_user(self) -> None:
-        """Configures Git user.name and user.email for the local repository if provided."""
-        if self.git_name:
-            logger.info(f"Configuring Git user.name locally: '{self.git_name}'")
-            code, _, err = self.run_command(["git", "config", "local", "user.name", self.git_name])
-            if code != 0:
-                self.run_command(["git", "config", "user.name", self.git_name])
-        else:
-            logger.info("Git user.name not specified. Using system/global configuration.")
+        """Configures Git user.name and user.email for the local repository if provided, or from global config."""
+        name_to_set = self.git_name
+        email_to_set = self.git_email
 
-        if self.git_email:
-            logger.info(f"Configuring Git user.email locally: '{self.git_email}'")
-            code, _, err = self.run_command(["git", "config", "local", "user.email", self.git_email])
-            if code != 0:
-                self.run_command(["git", "config", "user.email", self.git_email])
+        if not name_to_set:
+            code, stdout, _ = self.run_command(["git", "config", "--global", "user.name"])
+            if code == 0 and stdout.strip():
+                name_to_set = stdout.strip()
+
+        if not email_to_set:
+            code, stdout, _ = self.run_command(["git", "config", "--global", "user.email"])
+            if code == 0 and stdout.strip():
+                email_to_set = stdout.strip()
+
+        if name_to_set:
+            logger.info(f"Configuring Git user.name locally: '{name_to_set}'")
+            self.run_command(["git", "config", "user.name", name_to_set])
         else:
-            logger.info("Git user.email not specified. Using system/global configuration.")
+            logger.warning("Git user.name not specified or found in global config.")
+
+        if email_to_set:
+            logger.info(f"Configuring Git user.email locally: '{email_to_set}'")
+            self.run_command(["git", "config", "user.email", email_to_set])
+        else:
+            logger.warning("Git user.email not specified or found in global config.")
 
     def has_changes(self) -> bool:
         """Returns True if there are modified, deleted, or untracked changes in the repo."""
@@ -58,9 +67,10 @@ class GitManager:
             return False
         return len(stdout.strip()) > 0
 
-    def commit_and_push(self, message: str = "Sync Notion") -> bool:
+    def commit_and_push(self, message: str = "Sync Notion", allow_empty: bool = True) -> bool:
         """
-        Adds all changes, commits if there are changes, and pushes to remote.
+        Adds all changes, commits (allowing empty commit if no changes exist to ensure contribution activity),
+        and pushes to remote.
         Returns True if changes were committed and pushed, False otherwise.
         """
         if not self.is_git_installed():
@@ -74,14 +84,9 @@ class GitManager:
                 logger.error(f"Failed to initialize Git repository: {err}")
                 return False
                 
-        # Configure user locally
+        # Configure user locally (overriding any bot defaults)
         self.configure_user()
         
-        # Check if changes exist before staging
-        if not self.has_changes():
-            logger.info("No modifications detected in Git status. Nothing to commit.")
-            return False
-            
         # Stage all files
         logger.info("Staging changes: git add .")
         code, _, err = self.run_command(["git", "add", "."])
@@ -89,14 +94,20 @@ class GitManager:
             logger.error(f"Failed to run git add: {err}")
             return False
             
-        # Double check changes again
-        if not self.has_changes():
-            logger.info("No staged changes to commit.")
+        has_changes = self.has_changes()
+        
+        if not has_changes and not allow_empty:
+            logger.info("No modifications detected in Git status. Nothing to commit.")
             return False
             
         # Commit changes
-        logger.info(f"Committing changes: git commit -m '{message}'")
-        code, _, err = self.run_command(["git", "commit", "-m", message])
+        commit_args = ["git", "commit"]
+        if not has_changes and allow_empty:
+            commit_args.append("--allow-empty")
+        commit_args.extend(["-m", message])
+        
+        logger.info(f"Committing changes: {' '.join(commit_args)}")
+        code, _, err = self.run_command(commit_args)
         if code != 0:
             logger.error(f"Failed to commit changes: {err}")
             return False
